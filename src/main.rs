@@ -75,11 +75,13 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
 
     debug!("Arguments: {:?}", &args);
 
-    let self_path = PathBuf::from(args.pop_front().with_whatever_context(|| {
+    let mut self_path = PathBuf::from(args.pop_front().with_whatever_context(|| {
         "How is there no initial (self path) arg? What OS are you on?"
     })?);
-    let wrapped_path =
+    resolve_path(&mut self_path, &home_dir, true);
+    let mut wrapped_path =
         which::which("flatpak").with_whatever_context(|_| "Failed to find flatpak in PATH")?;
+    resolve_path(&mut wrapped_path, &home_dir, true);
 
     if self_path == wrapped_path {
         panic!("Misconfiguration would cause infinite loop! The `flatpak` selection in PATH points to this binary! Terminating IMMEDIATELY!");
