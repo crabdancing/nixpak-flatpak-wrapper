@@ -1,5 +1,5 @@
 [package]
-name = "flatpak-nixpak-wrapper"
+name = "nixpak-flatpak-wrapper"
 version = "0.1.0"
 edition = "2021"
 
