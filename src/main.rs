@@ -18,7 +18,7 @@ struct AppEntry {
     bind_ro: Vec<PathBuf>,
 }
 
-fn resolve_path(mut path: &mut PathBuf, home_dir: &PathBuf) {
+fn resolve_path(mut path: &mut PathBuf, home_dir: &PathBuf, canonicalize: bool) {
     // Dunno if we should expand ~?
     // Might as well.
     let my_path = path.clone();
@@ -29,9 +29,13 @@ fn resolve_path(mut path: &mut PathBuf, home_dir: &PathBuf) {
     } else {
         my_path
     };
-    let mut my_path = match path.canonicalize() {
-        Ok(canon_path) => canon_path,
-        Err(_) => my_path,
+    let mut my_path = if canonicalize {
+        match path.canonicalize() {
+            Ok(canon_path) => canon_path,
+            Err(_) => my_path,
+        }
+    } else {
+        my_path
     };
 
     std::mem::swap(&mut my_path, &mut path);
@@ -49,10 +53,10 @@ fn main() {
 
     for app in &mut config.perms {
         for rw_perm in &mut app.bind_rw {
-            resolve_path(rw_perm, &home_dir);
+            resolve_path(rw_perm, &home_dir, false);
         }
         for ro_perm in &mut app.bind_ro {
-            resolve_path(ro_perm, &home_dir);
+            resolve_path(ro_perm, &home_dir, false);
         }
     }
 
@@ -81,7 +85,7 @@ fn main() {
     debug!("path: {:?}", &path);
     debug!("app_name {:?}", &app_name);
 
-    resolve_path(&mut path, &home_dir);
+    resolve_path(&mut path, &home_dir, true);
     debug!("Resolved path: {:?}", &path);
 
     let mut output = String::new();
