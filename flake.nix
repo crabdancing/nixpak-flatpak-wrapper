@@ -64,9 +64,9 @@
         # Build the actual crate itself, reusing the dependency
         # artifacts from above.
         nixpak-flatpak-wrapper = craneLib.buildPackage (commonArgs // {
-          inherit cargoArtifacts;
+          pname = "flatpak"; # otherwise it'll expect bin/nixpak-flatpak-wrapper >.>
           postInstall = ''
-            wrapProgram $out/bin/nixpak-flatpak-wrapper \
+            wrapProgram $out/bin/flatpak \
               --prefix PATH : ${pkgs.flatpak}
           '';
           # Override other flatpak in the PATH dance uwu
