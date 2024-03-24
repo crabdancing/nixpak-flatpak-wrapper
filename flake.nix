@@ -65,6 +65,8 @@
         # artifacts from above.
         nixpak-flatpak-wrapper = craneLib.buildPackage (commonArgs // {
           pname = "flatpak"; # otherwise it'll expect bin/nixpak-flatpak-wrapper >.>
+          # if this is not EXACTLY right, the wrapper will of course call itself over and over again forever.
+          # TODO: detect infinite loop and kill self?
           postInstall = ''
             wrapProgram $out/bin/flatpak \
               --prefix PATH : ${pkgs.flatpak}/bin/
