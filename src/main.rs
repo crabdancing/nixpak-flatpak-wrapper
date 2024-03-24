@@ -1,4 +1,5 @@
 use std::{
+    collections::VecDeque,
     env,
     fs::{self, File},
     os,
@@ -68,11 +69,22 @@ fn setup_logger(log_path: &PathBuf) -> Result<(), fern::InitError> {
     Ok(())
 }
 
-fn app(args: &Vec<String>) -> Result<(), Whatever> {
+fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
     let home_dir =
         PathBuf::from(env::var("HOME").with_whatever_context(|_| "Failed to get HOME directory!")?);
 
     debug!("Arguments: {:?}", &args);
+
+    let self_path = PathBuf::from(args.pop_front().with_whatever_context(|| {
+        "How is there no initial (self path) arg? What OS are you on?"
+    })?);
+    let wrapped_path =
+        which::which("flatpak").with_whatever_context(|_| "Failed to find flatpak in PATH")?;
+
+    if self_path == wrapped_path {
+        panic!("Misconfiguration would cause infinite loop! The `flatpak` selection in PATH points to this binary! Terminating IMMEDIATELY!");
+    }
+
     let config_path = PathBuf::from("/etc/nixpak-flatpak-wrapper.toml");
     let config_str = std::fs::read_to_string(&config_path)
         .with_whatever_context(|_| "Failed to read config!")?;
@@ -160,9 +172,9 @@ fn main() {
 
     setup_logger(&log_file).expect("Failed to setup logging");
     debug!("Init");
-    let args: Vec<_> = env::args().skip(1).collect();
+    let mut args = env::args().collect();
 
-    match app(&args) {
+    match app(&mut args) {
         Ok(()) => {}
 
         Err(e) => {
