@@ -42,20 +42,6 @@ fn main() {
     let home_dir = PathBuf::from(env::var("HOME").expect("Failed to get HOME directory!"));
     let args: Vec<_> = env::args().skip(1).collect();
 
-    panic::set_hook(Box::new(|panic_info| {
-        // Your custom logic here
-        dbg!(panic_info);
-        if let Some(location) = panic_info.location() {
-            println!(
-                "Panic occurred in file '{}' at line {}",
-                location.file(),
-                location.line()
-            );
-        } else {
-            println!("Panic occurred but can't get location information...");
-        }
-    }));
-
     let config_str = std::fs::read_to_string("/etc/flatpak-nixpak-wrapper.toml")
         .expect("Failed to read config!");
 
