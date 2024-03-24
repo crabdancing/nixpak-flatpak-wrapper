@@ -69,6 +69,8 @@
             wrapProgram $out/bin/nixpak-flatpak-wrapper \
               --prefix PATH : ${pkgs.flatpak}
           '';
+          # Override other flatpak in the PATH dance uwu
+          meta.priority = 0;
         });
       in
       {
