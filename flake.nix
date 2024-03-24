@@ -67,7 +67,7 @@
           pname = "flatpak"; # otherwise it'll expect bin/nixpak-flatpak-wrapper >.>
           postInstall = ''
             wrapProgram $out/bin/flatpak \
-              --prefix PATH : ${pkgs.flatpak}
+              --prefix PATH : ${pkgs.flatpak}/bin/
           '';
           # Override other flatpak in the PATH dance uwu
           meta.priority = -10;
