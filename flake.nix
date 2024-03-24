@@ -39,6 +39,7 @@
           strictDeps = true;
 
           buildInputs = [
+            pkgs.makeWrapper
             # Add additional build inputs here
           ] ++ lib.optionals pkgs.stdenv.isDarwin [
             # Additional darwin specific inputs can be set here
@@ -64,6 +65,10 @@
         # artifacts from above.
         nixpak-flatpak-wrapper = craneLib.buildPackage (commonArgs // {
           inherit cargoArtifacts;
+          postInstall = ''
+            wrapProgram $out/bin/nixpak-flatpak-wrapper \
+              --prefix PATH : ${pkgs.flatpak}
+          '';
         });
       in
       {
