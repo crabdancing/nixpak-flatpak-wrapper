@@ -83,6 +83,9 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
         which::which("flatpak").with_whatever_context(|_| "Failed to find flatpak in PATH")?;
     resolve_path(&mut wrapped_path, &home_dir, true);
 
+    debug!("self_path: {:?}", &self_path);
+    debug!("wrapped_path: {:?}", &wrapped_path);
+
     if self_path == wrapped_path {
         panic!("Misconfiguration would cause infinite loop! The `flatpak` selection in PATH points to this binary! Terminating IMMEDIATELY!");
     }
