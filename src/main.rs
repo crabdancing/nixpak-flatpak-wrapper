@@ -42,7 +42,7 @@ fn main() {
     let home_dir = PathBuf::from(env::var("HOME").expect("Failed to get HOME directory!"));
     let args: Vec<_> = env::args().skip(1).collect();
 
-    let config_str = std::fs::read_to_string("/etc/flatpak-nixpak-wrapper.toml")
+    let config_str = std::fs::read_to_string("/etc/nixpak-flatpak-wrapper.toml")
         .expect("Failed to read config!");
 
     let mut config: Config = toml::from_str(&config_str).expect("Failed to deserialize config");
