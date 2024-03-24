@@ -10,7 +10,11 @@ name = "flatpak"
 path = "src/main.rs"
 
 [dependencies]
+chrono = "0.4.35"
+dirs = "5.0.1"
 env_logger = "0.11.3"
+fern = "0.6.2"
 log = "0.4.21"
 serde = { version = "1.0.197", features = ["derive"] }
+snafu = "0.8.2"
 toml = "0.8.12"

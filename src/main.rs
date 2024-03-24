@@ -1,8 +1,17 @@
-use std::{env, path::PathBuf, process::Command};
+use std::{
+    env,
+    fs::{self, File},
+    os,
+    path::PathBuf,
+    process::Command,
+    time::SystemTime,
+};
 
+use chrono::Local;
 use env_logger::Env;
-use log::debug;
+use log::{debug, info};
 use serde::{Deserialize, Serialize};
+use snafu::{whatever, OptionExt, ResultExt, Whatever};
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Config {
@@ -41,15 +50,35 @@ fn resolve_path(mut path: &mut PathBuf, home_dir: &PathBuf, canonicalize: bool) 
     std::mem::swap(&mut my_path, &mut path);
 }
 
-fn main() {
-    env_logger::init_from_env(Env::new());
-    let home_dir = PathBuf::from(env::var("HOME").expect("Failed to get HOME directory!"));
-    let args: Vec<_> = env::args().skip(1).collect();
+fn setup_logger(log_path: &PathBuf) -> Result<(), fern::InitError> {
+    fern::Dispatch::new()
+        .format(|out, message, record| {
+            out.finish(format_args!(
+                "[{} {} {}] {}",
+                Local::now().to_rfc3339(),
+                record.level(),
+                record.target(),
+                message
+            ))
+        })
+        .level(log::LevelFilter::Debug)
+        // .chain(std::io::stdout())
+        .chain(fern::log_file(log_path)?)
+        .apply()?;
+    Ok(())
+}
 
-    let config_str = std::fs::read_to_string("/etc/nixpak-flatpak-wrapper.toml")
-        .expect("Failed to read config!");
+fn app(args: &Vec<String>) -> Result<(), Whatever> {
+    let home_dir =
+        PathBuf::from(env::var("HOME").with_whatever_context(|_| "Failed to get HOME directory!")?);
 
-    let mut config: Config = toml::from_str(&config_str).expect("Failed to deserialize config");
+    debug!("Arguments: {:?}", &args);
+    let config_path = PathBuf::from("/etc/nixpak-flatpak-wrapper.toml");
+    let config_str = std::fs::read_to_string(&config_path)
+        .with_whatever_context(|_| "Failed to read config!")?;
+
+    let mut config: Config =
+        toml::from_str(&config_str).with_whatever_context(|_| "Failed to deserialize config")?;
 
     for app in &mut config.perms {
         for rw_perm in &mut app.bind_rw {
@@ -73,7 +102,12 @@ fn main() {
             }
             _ => {
                 if arg.starts_with("--file-access=") {
-                    path.clone_from(&arg.split_once("=").unwrap().1.into());
+                    path.clone_from(
+                        &arg.split_once("=")
+                            .with_whatever_context(|| "What tf even happened here?")?
+                            .1
+                            .into(),
+                    );
                 } else {
                     app_name = arg.clone();
                 }
@@ -90,28 +124,53 @@ fn main() {
 
     let mut output = String::new();
 
-    if info_mode {
-        let mut accepted_perms = config.perms.iter().filter(|x| x.app_name == app_name);
-        match accepted_perms.next() {
-            Some(first_accepted_perm) => {
-                debug!("Found accepted perm: {:?}", &first_accepted_perm);
-                if first_accepted_perm.bind_rw.contains(&path) {
-                    output = "read-write".into();
-                } else if first_accepted_perm.bind_ro.contains(&path) {
-                    output = "read-only".into();
-                } else {
-                    output = "hidden".into();
-                }
-            }
-            None => {}
-        }
+    if !info_mode {
+        whatever!("Not in info mode. No action required");
     }
+    let mut accepted_perms = config.perms.iter().filter(|x| x.app_name == app_name);
+    match accepted_perms.next() {
+        Some(first_accepted_perm) => {
+            debug!("Found accepted perm: {:?}", &first_accepted_perm);
+            if first_accepted_perm.bind_rw.contains(&path) {
+                output = "read-write".into();
+            } else if first_accepted_perm.bind_ro.contains(&path) {
+                output = "read-only".into();
+            } else {
+                output = "hidden".into();
+            }
+        }
+        None => {}
+    }
+
     if output.is_empty() {
-        Command::new("flatpak")
-            .args(&args)
-            .spawn()
-            .expect("No failure");
-    } else {
-        println!("{}", output);
+        whatever!("No output to give");
+    }
+
+    println!("{}", output);
+    debug!("Gave output: {}", output);
+
+    Ok(())
+}
+
+fn main() {
+    let mut log_file = dirs::data_local_dir().expect("Could not get data local dir");
+    log_file.push("nixpak-flatpak-wrapper");
+    fs::create_dir_all(&log_file).expect("Failed to create my data local dir");
+    log_file.push("nixpak-flatpak-wrapper.log");
+
+    setup_logger(&log_file).expect("Failed to setup logging");
+    debug!("Init");
+    let args: Vec<_> = env::args().skip(1).collect();
+
+    match app(&args) {
+        Ok(()) => {}
+
+        Err(e) => {
+            info!("{}", e);
+            Command::new("flatpak")
+                .args(&args)
+                .spawn()
+                .expect("No failure");
+        }
     }
 }
