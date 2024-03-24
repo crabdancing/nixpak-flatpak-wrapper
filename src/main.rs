@@ -1,4 +1,4 @@
-use std::{env, panic, path::PathBuf, process::Command};
+use std::{env, path::PathBuf, process::Command};
 
 use env_logger::Env;
 use log::debug;
