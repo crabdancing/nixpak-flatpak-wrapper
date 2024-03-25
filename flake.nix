@@ -1,5 +1,5 @@
 {
-  description = "Build a cargo project";
+  description = "nixpak-flatpak-wrapper";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -18,9 +18,9 @@
       {
   
         packages.default = nixpak-flatpak-wrapper;
-        apps.default = flake-utils.lib.mkApp {
-          drv = nixpak-flatpak-wrapper;
-        };
+        # apps.default = flake-utils.lib.mkApp {
+        #   drv = nixpak-flatpak-wrapper;
+        # };
       }) // {
       nixosModule = import ./module.nix;
     };
