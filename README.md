@@ -16,6 +16,15 @@ I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com
 
 ## Usage
 
+You can add it to your system flake `inputs` like so:
+
+```nix
+nixpak-flatpak-wrapper = {
+  url = "github:alxpettit/nixpak-flatpak-wrapper";
+  inputs.nixpkgs.follows = "nixpkgs";
+};
+```
+
 Once you've added the `nixosModule` to your system modules, configuration can happen like so:
 ```nix
 programs.nixpak-flatpak-wrapper = {
