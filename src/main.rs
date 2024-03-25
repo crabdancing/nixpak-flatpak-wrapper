@@ -25,8 +25,9 @@ enum OutputOptions {
     ReadOnly,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 struct Config {
+    #[serde(default)]
     perms: Vec<AppEntry>,
 }
 
