@@ -32,7 +32,9 @@ struct Config {
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Bind {
+    #[serde(default)]
     rw: Vec<PathBuf>,
+    #[serde(default)]
     ro: Vec<PathBuf>,
 }
 
