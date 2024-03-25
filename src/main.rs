@@ -1,18 +1,29 @@
 use std::{
     collections::VecDeque,
     env,
-    fs::{self, File},
-    os,
+    fs::{self},
     path::PathBuf,
     process::Command,
-    time::SystemTime,
 };
 
 use chrono::Local;
-use env_logger::Env;
+
 use log::{debug, error, info};
 use serde::{Deserialize, Serialize};
 use snafu::{whatever, OptionExt, ResultExt, Whatever};
+use strum_macros::Display;
+
+#[derive(Eq, PartialEq, Display)]
+enum OutputOptions {
+    #[strum(serialize = "hidden")]
+    None,
+    #[strum(serialize = "hidden")]
+    Hidden,
+    #[strum(serialize = "read-write")]
+    ReadWrite,
+    #[strum(serialize = "read-only")]
+    ReadOnly,
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Config {
@@ -140,27 +151,36 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
     resolve_path(&mut path, &home_dir, true);
     debug!("Resolved path: {:?}", &path);
 
-    let mut output = String::new();
-
     if !info_mode {
         whatever!("Not in info mode. No action required");
     }
+
+    let mut output = OutputOptions::None;
+
     let mut accepted_perms = config.perms.iter().filter(|x| x.app_name == app_name);
     match accepted_perms.next() {
         Some(first_accepted_perm) => {
             debug!("Found accepted perm: {:?}", &first_accepted_perm);
-            if first_accepted_perm.bind_rw.contains(&path) {
-                output = "read-write".into();
-            } else if first_accepted_perm.bind_ro.contains(&path) {
-                output = "read-only".into();
-            } else {
-                output = "hidden".into();
+            output = OutputOptions::Hidden;
+            if first_accepted_perm
+                .bind_rw
+                .iter()
+                .any(|x| path.starts_with(x))
+            {
+                output = OutputOptions::ReadWrite;
+            }
+            if first_accepted_perm
+                .bind_ro
+                .iter()
+                .any(|x| path.starts_with(x))
+            {
+                output = OutputOptions::ReadOnly;
             }
         }
         None => {}
     }
 
-    if output.is_empty() {
+    if output == OutputOptions::None {
         whatever!("No output to give");
     }
 
