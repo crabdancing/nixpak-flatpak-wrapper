@@ -16,6 +16,32 @@ I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com
 
 ## Usage
 
+Once you've added the `nixosModule` to your system modules, configuration can happen like so:
+```nix
+programs.nixpak-flatpak-wrapper = {
+  enable = true;
+  rawStructuredConfig = {
+    perms = [
+      {
+        app_name = "org.chromium.Chromium";
+        bind.rw = [
+          "~/Downloads"
+        ];
+      }
+      {
+        app_name = "org.mozilla.firefox";
+        bind.rw = [
+          "~/Downloads"
+        ];
+      }
+    ];
+  };
+};
+```
+
+It's planned that eventually the Nix expression will be schema-aware, but for now it is raw structured data.
+
+## Internals
 
 Config is stored at `/etc/nixpak-flatpak-wrapper.toml` and can be declaratively managed through structured data. Might someday add a module to make that easier.
 
