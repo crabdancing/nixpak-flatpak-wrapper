@@ -156,7 +156,6 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
     }
 
     let mut output = OutputOptions::None;
-
     let mut accepted_perms = config.perms.iter().filter(|x| x.app_name == app_name);
     match accepted_perms.next() {
         Some(first_accepted_perm) => {
