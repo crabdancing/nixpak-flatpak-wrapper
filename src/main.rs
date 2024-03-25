@@ -84,8 +84,10 @@ fn setup_logger(log_path: &PathBuf) -> Result<(), fern::InitError> {
 }
 
 fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
-    let home_dir =
-        PathBuf::from(env::var("HOME").with_whatever_context(|_| "Failed to get HOME directory!")?);
+    let home_dir = PathBuf::from(
+        env::var("HOME")
+            .with_whatever_context(|e| format!("Failed to get HOME directory!: {:?}", e))?,
+    );
 
     debug!("Arguments: {:?}", &args);
 
@@ -93,8 +95,8 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
         "How is there no initial (self path) arg? What OS are you on?"
     })?);
     resolve_path(&mut self_path, &home_dir, true);
-    let mut wrapped_path =
-        which::which("flatpak").with_whatever_context(|_| "Failed to find flatpak in PATH")?;
+    let mut wrapped_path = which::which("flatpak")
+        .with_whatever_context(|e| format!("Failed to find flatpak in PATH: {:?}", e))?;
     resolve_path(&mut wrapped_path, &home_dir, true);
 
     debug!("self_path: {:?}", &self_path);
@@ -107,10 +109,10 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
 
     let config_path = PathBuf::from("/etc/nixpak-flatpak-wrapper.toml");
     let config_str = std::fs::read_to_string(&config_path)
-        .with_whatever_context(|_| "Failed to read config!")?;
+        .with_whatever_context(|e| format!("Failed to read config!: {:?}", e))?;
 
-    let mut config: Config =
-        toml::from_str(&config_str).with_whatever_context(|_| "Failed to deserialize config")?;
+    let mut config: Config = toml::from_str(&config_str)
+        .with_whatever_context(|e| format!("Failed to deserialize config: {:?}", e))?;
 
     for app in &mut config.perms {
         for rw_perm in &mut app.bind.rw {
