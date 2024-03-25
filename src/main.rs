@@ -30,7 +30,7 @@ struct Config {
     perms: Vec<AppEntry>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Default)]
 struct Bind {
     #[serde(default)]
     rw: Vec<PathBuf>,
@@ -41,6 +41,7 @@ struct Bind {
 #[derive(Serialize, Deserialize, Debug)]
 struct AppEntry {
     app_name: String,
+    #[serde(default)]
     bind: Bind,
 }
 
