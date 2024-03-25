@@ -15,7 +15,7 @@ in {
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [
-      (pkgs.callPackage ./pkg.nix)
+      (import ./pkg.nix { inherit pkgs lib; })
     ];
     environment.etc."nixpak-flatpak-wrapper.toml".source = fmt.generate "nixpak-flatpak-wrapper.toml" cfg.rawStructuredConfig;
   };
