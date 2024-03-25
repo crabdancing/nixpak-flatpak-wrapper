@@ -32,13 +32,13 @@ programs.nixpak-flatpak-wrapper = {
   rawStructuredConfig = {
     perms = [
       {
-        app_name = "org.chromium.Chromium";
+        app_id = "org.chromium.Chromium";
         bind.rw = [
           "~/Downloads"
         ];
       }
       {
-        app_name = "org.mozilla.firefox";
+        app_id = "org.mozilla.firefox";
         bind.rw = [
           "~/Downloads"
         ];
@@ -58,14 +58,14 @@ The schema is as such:
 
 ```toml
 [[perms]]
-app_name = "org.chromium.Chromium"
+app_id = "org.chromium.Chromium"
 bind.rw = [
   "~/Downloads"
 ]
 bind.ro = []
 
 [[perms]]
-app_name = "org.mozilla.firefox"
+app_id = "org.mozilla.firefox"
 bind.rw = [
   "~/Downloads"
 ]

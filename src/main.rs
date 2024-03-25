@@ -41,7 +41,7 @@ struct Bind {
 
 #[derive(Serialize, Deserialize, Debug)]
 struct AppEntry {
-    app_name: String,
+    app_id: String,
     #[serde(default)]
     bind: Bind,
 }
@@ -165,7 +165,7 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
     }
 
     let mut output = OutputOptions::None;
-    let mut accepted_perms = config.perms.iter().filter(|x| x.app_name == app_name);
+    let mut accepted_perms = config.perms.iter().filter(|x| x.app_id == app_name);
     match accepted_perms.next() {
         Some(first_accepted_perm) => {
             debug!("Found accepted perm: {:?}", &first_accepted_perm);
