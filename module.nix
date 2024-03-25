@@ -1,5 +1,4 @@
-# hideous, I know
-{ nixpak-flatpak-wrapper }: { config, pkgs, lib, ... }: let
+{ config, pkgs, lib, ... }: let
   cfg = config.programs.nixpak-flatpak-wrapper;
   fmt = pkgs.formats.toml {};
 in {
@@ -16,9 +15,9 @@ in {
 
   config = lib.mkIf cfg.enable {
     environment.systemPackages = [
-    
+      (pkgs.callPackage ./pkg.nix)
     ];
-      environment.etc."nixpak-flatpak-wrapper.toml".source = fmt.generate "nixpak-flatpak-wrapper.toml" cfg.rawStructuredConfig;
+    environment.etc."nixpak-flatpak-wrapper.toml".source = fmt.generate "nixpak-flatpak-wrapper.toml" cfg.rawStructuredConfig;
   };
 
 }
