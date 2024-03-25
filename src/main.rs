@@ -10,7 +10,7 @@ use std::{
 
 use chrono::Local;
 use env_logger::Env;
-use log::{debug, info};
+use log::{debug, error, info};
 use serde::{Deserialize, Serialize};
 use snafu::{whatever, OptionExt, ResultExt, Whatever};
 
@@ -87,6 +87,7 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
     debug!("wrapped_path: {:?}", &wrapped_path);
 
     if self_path == wrapped_path {
+        error!("Misconfiguration would cause infinite loop! The `flatpak` selection in PATH points to this binary! Terminating IMMEDIATELY!");
         panic!("Misconfiguration would cause infinite loop! The `flatpak` selection in PATH points to this binary! Terminating IMMEDIATELY!");
     }
 
