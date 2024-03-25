@@ -31,12 +31,15 @@ struct Config {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+struct Bind {
+    rw: Vec<PathBuf>,
+    ro: Vec<PathBuf>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 struct AppEntry {
     app_name: String,
-    #[serde(rename = "bind_rw", default)]
-    bind_rw: Vec<PathBuf>,
-    #[serde(rename = "bind_ro", default)]
-    bind_ro: Vec<PathBuf>,
+    bind: Bind,
 }
 
 fn resolve_path(mut path: &mut PathBuf, home_dir: &PathBuf, canonicalize: bool) {
@@ -110,10 +113,10 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
         toml::from_str(&config_str).with_whatever_context(|_| "Failed to deserialize config")?;
 
     for app in &mut config.perms {
-        for rw_perm in &mut app.bind_rw {
+        for rw_perm in &mut app.bind.rw {
             resolve_path(rw_perm, &home_dir, false);
         }
-        for ro_perm in &mut app.bind_ro {
+        for ro_perm in &mut app.bind.ro {
             resolve_path(ro_perm, &home_dir, false);
         }
     }
@@ -162,14 +165,16 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
             debug!("Found accepted perm: {:?}", &first_accepted_perm);
             output = OutputOptions::Hidden;
             if first_accepted_perm
-                .bind_rw
+                .bind
+                .rw
                 .iter()
                 .any(|x| path.starts_with(x))
             {
                 output = OutputOptions::ReadWrite;
             }
             if first_accepted_perm
-                .bind_ro
+                .bind
+                .ro
                 .iter()
                 .any(|x| path.starts_with(x))
             {
