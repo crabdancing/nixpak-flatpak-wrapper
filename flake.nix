@@ -19,9 +19,6 @@
       {
   
         packages.default = nixpak-flatpak-wrapper;
-        # apps.default = flake-utils.lib.mkApp {
-        #   drv = nixpak-flatpak-wrapper;
-        # };
       }) // {
       nixosModule = import ./module.nix;
     };
