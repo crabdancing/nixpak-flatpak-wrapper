@@ -1,7 +1,14 @@
 Glue to wrap `flatpak`, as part of a mischievous scam, tricking `xdg-desktop-portal` into letting us have decent [delcaratively managed containerization on NixOS](https://github.com/nixpak/nixpak/).
 
-
 I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com/flatpak/xdg-desktop-portal/pull/741) on this any time soon.
+
+Features:
+
+- Theoretically kind of robust (IDK, I haven't seen it misbehave yet.)
+- Most failure modes will simply transparently call flatpak to avoid bricking flatpak
+- Comes with a binary name deliberately colliding with `flatpak`, and a derivation set with a priority of `-10` in the hopes of always overriding flatpak.
+- Logs its experiences in a wonderous diary of adventure so that you can see why, when something goes wrong.
+- Centrally managed with a TOML config file, which is hopefully kind of easy to declaratively manage.
 
 Config is stored at `/etc/nixpak-flatpak-wrapper.toml` and can be declaratively managed through structured data. Might someday add a module to make that easier.
 
