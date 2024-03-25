@@ -143,4 +143,6 @@
           ];
         };
       });
+
+    nixosModule = import ./module.nix;
 }
