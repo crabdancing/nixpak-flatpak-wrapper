@@ -221,7 +221,9 @@ fn main() {
                 .stderr(Stdio::inherit())
                 .args(&args)
                 .spawn()
-                .expect("No failure");
+                .expect("Failed to spawn child process")
+                .wait()
+                .expect("Failed to wait for child process");
         }
     }
 }
