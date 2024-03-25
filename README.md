@@ -14,4 +14,13 @@ bind_rw = [
   "~/Downloads"
 ]
 bind_ro = []
+
+[[perms]]
+app_name = "org.mozilla.firefox"
+bind_rw = [
+  "~/Downloads"
+]
+bind_ro = []
 ```
+
+It records what happens in `~/.local/share/nixpak-flatpak-wrapper/nixpak-flatpak-wrapper.log` for ease of debugging. This is because a drop-in wrapper/replacement should not print warning/error messages the original app would not have, in case it breaks someone's parsing.
