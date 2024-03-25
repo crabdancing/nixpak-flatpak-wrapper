@@ -3,7 +3,7 @@ use std::{
     env,
     fs::{self},
     path::PathBuf,
-    process::Command,
+    process::{Command, Stdio},
 };
 
 use chrono::Local;
@@ -206,6 +206,9 @@ fn main() {
         Err(e) => {
             info!("{}", e);
             Command::new("flatpak")
+                .stdin(Stdio::inherit())
+                .stdout(Stdio::inherit())
+                .stderr(Stdio::inherit())
                 .args(&args)
                 .spawn()
                 .expect("No failure");
