@@ -13,7 +13,8 @@
         pkgs = import nixpkgs {
           inherit system;
         };
-        nixpak-flatpak-wrapper = pkgs.callPackage ./pkg.nix;
+        lib = pkgs.lib;
+        nixpak-flatpak-wrapper = (import ./pkg.nix) { inherit pkgs lib; };
       in
       {
   
