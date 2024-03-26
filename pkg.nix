@@ -17,7 +17,7 @@ pkgs.rustPlatform.buildRustPackage rec {
     homepage = "https://github.com/alxpettit/nixpak-flatpak-wrapper";
     license = pkgs.lib.licenses.lgpl3Only;
     # Override other flatpak in the PATH dance uwu
-    meta.priority = -10;
+    # meta.priority = -10;
   };
 }
 

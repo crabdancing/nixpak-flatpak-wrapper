@@ -13,11 +13,11 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = lib.mkIf cfg.enable (lib.mkBefore {
     environment.systemPackages = [
       (import ./pkg.nix { inherit pkgs lib; })
     ];
     environment.etc."nixpak-flatpak-wrapper.toml".source = fmt.generate "nixpak-flatpak-wrapper.toml" cfg.rawStructuredConfig;
-  };
+  });
 
 }
