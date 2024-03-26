@@ -5,9 +5,9 @@ I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com
 ## Features 
 
 - Theoretically kind of robust (IDK, I haven't seen it misbehave yet.)
-- Detect misconfigurations & prevent infinite loops (i.e., failure modes where the wrapper is calling itself because it is the first `flatpak` on its own PATH)
 - Most failure modes will simply transparently call flatpak to avoid bricking flatpak
-- Comes with a binary name deliberately colliding with `flatpak`, and a derivation set with a priority of `-10` in the hopes of always overriding flatpak.
+- Wraps the entirety of the `pkgs.flatpak` file set, transparently updating it with a replacement for the binary, renaming the old binary to `flatpak-raw`
+- Easy-to-use module for drop-in reliable configuration & setup
 - Contains built-in Nix wrapper to ensure the PATH always begins with `${pkgs.flatpak}/bin/` bin, to prevent configuration mistakes.
 - Logs its experiences in a wondrous diary of adventure so that you can see why, when something goes wrong.
 - Centrally managed with a TOML config file, which is hopefully kind of easy to declaratively manage.
