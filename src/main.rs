@@ -81,7 +81,6 @@ fn setup_logger(log_path: &PathBuf) -> Result<(), fern::InitError> {
             ))
         })
         .level(log::LevelFilter::Debug)
-        // .chain(std::io::stdout())
         .chain(fern::log_file(log_path)?)
         .apply()?;
     Ok(())

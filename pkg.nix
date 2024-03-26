@@ -8,10 +8,6 @@ let
     buildInputs = [ pkgs.makeWrapper ];
     cargoBuildFlags = [ ];
     cargoLock.lockFile = ./Cargo.lock;
-    # postInstall = ''
-    #   wrapProgram $out/bin/flatpak \
-    #     --prefix PATH : ${flatpak-pkg}/bin/
-    # '';
     meta = {
       description = "A wrapper for flatpak to make xdg-portal service compatible with nixpak";
       homepage = "https://github.com/alxpettit/nixpak-flatpak-wrapper";

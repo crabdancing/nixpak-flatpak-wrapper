@@ -1,25 +1,24 @@
 { config, pkgs, lib, ... }: let
   cfg = config.programs.nixpak-flatpak-wrapper;
   fmt = pkgs.formats.toml {};
-  flatpak-wrapper = import ./pkg.nix {
+  wrapperPackage = import ./pkg.nix {
     inherit pkgs lib;
     flatpak-pkg = cfg.package;
   };
-  wrapperPackage = pkgs.symlinkJoin {
-    name = "flatpak";
-    meta.mainProgram = "flatpak";
-    paths = [ pkgs.flatpak ];
-    nativeBuildInputs = [ pkgs.makeWrapper ];
-    postBuild = ''
-      mv "$out/bin/flatpak" "$out/bin/flatpak-raw"
-      cp "${flatpak-wrapper}/bin/flatpak" "$out/bin/flatpak"
-    '';
-  };
-
 in {
   options.programs.nixpak-flatpak-wrapper = {
     rawStructuredConfig = lib.mkOption {
-      # TODO: schema?
+      type = lib.types.attrsOf (lib.types.listOf (lib.types.submodule {
+      options = {
+        app_id = lib.types.str;
+        bind = lib.types.submodule {
+          options = {
+            rw = lib.types.listOf lib.types.str;
+            ro = lib.types.listOf lib.types.str;
+          };
+        };
+      };
+      }));
       default = {};
     };
     enable = lib.mkOption {
