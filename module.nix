@@ -25,12 +25,12 @@ in {
     };
   };
 
-  config = lib.mkIf cfg.enable (lib.mkBefore {
+  config = lib.mkIf cfg.enable {
     environment.systemPackages = [
       wrapperPackage
 
     ];
     environment.etc."nixpak-flatpak-wrapper.toml".source = fmt.generate "nixpak-flatpak-wrapper.toml" cfg.rawStructuredConfig;
-  });
+  };
 
 }
