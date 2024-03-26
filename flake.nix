@@ -14,7 +14,10 @@
           inherit system;
         };
         lib = pkgs.lib;
-        nixpak-flatpak-wrapper = import ./pkg.nix { inherit pkgs lib; };
+        nixpak-flatpak-wrapper = import ./pkg.nix {
+          inherit pkgs lib;
+          flatpak-pkg = pkgs.flatpak;
+        };
       in
       {
   

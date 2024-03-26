@@ -95,22 +95,6 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
 
     debug!("Arguments: {:?}", &args);
 
-    let mut self_path = PathBuf::from(args.pop_front().with_whatever_context(|| {
-        "How is there no initial (self path) arg? What OS are you on?"
-    })?);
-    resolve_path(&mut self_path, &home_dir, true);
-    let mut wrapped_path = which::which("flatpak")
-        .with_whatever_context(|e| format!("Failed to find flatpak in PATH: {:?}", e))?;
-    resolve_path(&mut wrapped_path, &home_dir, true);
-
-    debug!("self_path: {:?}", &self_path);
-    debug!("wrapped_path: {:?}", &wrapped_path);
-
-    if self_path == wrapped_path {
-        error!("Misconfiguration would cause infinite loop! The `flatpak` selection in PATH points to this binary! Terminating IMMEDIATELY!");
-        panic!("Misconfiguration would cause infinite loop! The `flatpak` selection in PATH points to this binary! Terminating IMMEDIATELY!");
-    }
-
     let config_path = PathBuf::from("/etc/nixpak-flatpak-wrapper.toml");
     let config_str = std::fs::read_to_string(&config_path)
         .with_whatever_context(|e| format!("Failed to read config!: {:?}", e))?;
@@ -200,7 +184,7 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
     Ok(())
 }
 
-fn main() {
+fn main() -> Result<(), Whatever> {
     let mut log_file = dirs::data_local_dir().expect("Could not get data local dir");
     log_file.push("nixpak-flatpak-wrapper");
     fs::create_dir_all(&log_file).expect("Failed to create my data local dir");
@@ -208,14 +192,35 @@ fn main() {
 
     setup_logger(&log_file).expect("Failed to setup logging");
     debug!("Init");
-    let mut args = env::args().collect();
+    let mut args: VecDeque<String> = env::args().collect();
+
+    let home_dir = PathBuf::from(
+        env::var("HOME")
+            .with_whatever_context(|e| format!("Failed to get HOME directory!: {:?}", e))?,
+    );
+
+    let mut self_path = PathBuf::from(args.pop_front().with_whatever_context(|| {
+        "How is there no initial (self path) arg? What OS are you on?"
+    })?);
+
+    debug!("self_path: {:?}", &self_path);
+    self_path.pop();
+    self_path.push("flatpak-raw");
+    let wrapped_path = self_path;
+
+    debug!("wrapped_path: {:?}", &wrapped_path);
+
+    let wrapped_path = match wrapped_path.exists() {
+        true => wrapped_path.to_owned(),
+        false => PathBuf::from("flatpak-raw"),
+    };
 
     match app(&mut args) {
         Ok(()) => {}
 
         Err(e) => {
             info!("{}", e);
-            Command::new("flatpak-raw")
+            Command::new(wrapped_path)
                 .stdin(Stdio::inherit())
                 .stdout(Stdio::inherit())
                 .stderr(Stdio::inherit())
@@ -226,4 +231,5 @@ fn main() {
                 .expect("Failed to wait for child process");
         }
     }
+    Ok(())
 }

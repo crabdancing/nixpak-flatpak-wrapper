@@ -1,13 +1,16 @@
 { config, pkgs, lib, ... }: let
   cfg = config.programs.nixpak-flatpak-wrapper;
   fmt = pkgs.formats.toml {};
-  flatpak-wrapper = import ./pkg.nix { inherit pkgs lib; };
+  flatpak-wrapper = import ./pkg.nix {
+    inherit pkgs lib;
+    flatpak-pkg = cfg.package;
+  };
   wrapperPackage = pkgs.symlinkJoin {
     name = "flatpak";
     meta.mainProgram = "flatpak";
     paths = [ pkgs.flatpak ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
-    postInstall = ''
+    postBuild = ''
       mv "$out/bin/flatpak" "$out/bin/flatpak-raw"
       cp "${flatpak-wrapper}/bin/flatpak" "$out/bin/flatpak"
     '';
