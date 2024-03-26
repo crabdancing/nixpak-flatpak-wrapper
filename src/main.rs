@@ -215,7 +215,7 @@ fn main() {
 
         Err(e) => {
             info!("{}", e);
-            Command::new("flatpak")
+            Command::new("flatpak-raw")
                 .stdin(Stdio::inherit())
                 .stdout(Stdio::inherit())
                 .stderr(Stdio::inherit())
