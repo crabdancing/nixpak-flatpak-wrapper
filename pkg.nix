@@ -16,8 +16,6 @@ pkgs.rustPlatform.buildRustPackage rec {
     description = "A wrapper for flatpak to make xdg-portal service compatible with nixpak";
     homepage = "https://github.com/alxpettit/nixpak-flatpak-wrapper";
     license = pkgs.lib.licenses.lgpl3Only;
-    # Override other flatpak in the PATH dance uwu
-    # meta.priority = -10;
   };
 }
 
