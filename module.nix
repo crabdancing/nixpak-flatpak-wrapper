@@ -33,6 +33,9 @@ in {
     environment.systemPackages = [
       wrapperPackage
     ];
+    services.dbus.packages = [ wrapperPackage ];
+    systemd.packages = [ wrapperPackage ];
+
     environment.etc."nixpak-flatpak-wrapper.toml".source = fmt.generate "nixpak-flatpak-wrapper.toml" cfg.rawStructuredConfig;
   };
 
