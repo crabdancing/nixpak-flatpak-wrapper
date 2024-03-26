@@ -11,7 +11,7 @@ I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com
 - Contains built-in Nix wrapper to ensure the PATH always begins with `${pkgs.flatpak}/bin/` bin, to prevent configuration mistakes.
 - Logs its experiences in a wondrous diary of adventure so that you can see why, when something goes wrong.
 - Centrally managed with a TOML config file, which is hopefully kind of easy to declaratively manage.
-- A schema-aware Nix configuration module, so that I can forget to update it when I make changes to the TOML config.
+- A schema-aware Nix configuration module, so that I will forget to update it when I make changes to the TOML config. :sob:
 - Arguably overengineered, with questionable features such as tilda expansion.
 
 
