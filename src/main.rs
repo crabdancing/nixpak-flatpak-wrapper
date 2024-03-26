@@ -28,6 +28,8 @@ enum OutputOptions {
 #[derive(Serialize, Deserialize, Debug, Default)]
 struct Config {
     #[serde(default)]
+    enable_logging: bool,
+    #[serde(default)]
     perms: Vec<AppEntry>,
 }
 

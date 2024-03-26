@@ -5,21 +5,43 @@
     inherit pkgs lib;
     flatpak-pkg = cfg.package;
   };
+  permissionType = lib.types.submodule {
+    options = {
+      app_id = lib.mkOption {
+        type = lib.types.str;
+        description = "Application identifier";
+      };
+      bind = lib.mkOption {
+        type = lib.types.submodule {
+          options = {
+            rw = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              default = [];
+              description = "Directories to bind read-write";
+            };
+            ro = lib.mkOption {
+              type = lib.types.listOf lib.types.str;
+              default = [];
+              description = "Directories to bind read-only";
+            };
+          };
+        };
+        description = "Bind permissions";
+      };
+    };
+  };
 in {
   options.programs.nixpak-flatpak-wrapper = {
     rawStructuredConfig = lib.mkOption {
-      type = lib.types.attrsOf (lib.types.listOf (lib.types.submodule {
-      options = {
-        app_id = lib.types.str;
-        bind = lib.types.submodule {
-          options = {
-            rw = lib.types.listOf lib.types.str;
-            ro = lib.types.listOf lib.types.str;
+      type = lib.types.submodule {
+        options = {
+          perms = lib.mkOption {
+            type = lib.types.listOf permissionType;
+            default = [];
+            description = "List of permissions for applications";
           };
         };
       };
-      }));
-      default = {};
     };
     enable = lib.mkOption {
       type = lib.types.bool;
