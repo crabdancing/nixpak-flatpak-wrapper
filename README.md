@@ -52,7 +52,7 @@ It's planned that eventually the Nix expression will be schema-aware, but for no
 
 ## Internals
 
-Config is stored at `/etc/nixpak-flatpak-wrapper.toml` and can be declaratively managed through structured data. Might someday add a module to make that easier.
+Config is stored at `/etc/nixpak-flatpak-wrapper.toml`
 
 The schema is as such:
 
