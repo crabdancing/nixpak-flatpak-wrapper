@@ -32,7 +32,7 @@
   };
 in {
   options.programs.nixpak-flatpak-wrapper = {
-    rawStructuredConfig = lib.mkOption {
+    settings = lib.mkOption {
       type = lib.types.submodule {
         options = {
           perms = lib.mkOption {
@@ -60,7 +60,7 @@ in {
     services.dbus.packages = [ wrapperPackage ];
     systemd.packages = [ wrapperPackage ];
 
-    environment.etc."nixpak-flatpak-wrapper.toml".source = fmt.generate "nixpak-flatpak-wrapper.toml" cfg.rawStructuredConfig;
+    environment.etc."nixpak-flatpak-wrapper.toml".source = fmt.generate "nixpak-flatpak-wrapper.toml" cfg.settings;
   };
 
 }

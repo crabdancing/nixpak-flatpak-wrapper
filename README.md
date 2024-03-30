@@ -30,7 +30,7 @@ Once you've added the `nixosModule` to your system modules, configuration can ha
 ```nix
 programs.nixpak-flatpak-wrapper = {
   enable = true;
-  rawStructuredConfig = {
+  settings = {
     perms = [
       {
         app_id = "org.chromium.Chromium";
