@@ -26,7 +26,7 @@ nixpak-flatpak-wrapper = {
 };
 ```
 
-Once you've added the `nixosModule` to your system modules, configuration can happen like so:
+Once you've added the `nixosModules.default` to your system modules, configuration can happen like so:
 ```nix
 programs.nixpak-flatpak-wrapper = {
   enable = true;

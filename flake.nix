@@ -24,5 +24,6 @@
         packages.default = nixpak-flatpak-wrapper;
       }) // {
       nixosModules.default = import ./module.nix;
+      nixosModule = import ./module.nix;
     };
 }
