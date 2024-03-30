@@ -23,6 +23,6 @@
   
         packages.default = nixpak-flatpak-wrapper;
       }) // {
-      nixosModule = import ./module.nix;
+      nixosModules.default = import ./module.nix;
     };
 }
