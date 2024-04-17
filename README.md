@@ -8,7 +8,6 @@ I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com
 - Most failure modes will simply transparently call flatpak to avoid bricking flatpak
 - Wraps the entirety of the `pkgs.flatpak` file set, transparently updating it with a replacement for the binary, renaming the old binary to `flatpak-raw`
 - Easy-to-use module for drop-in reliable configuration & setup
-- Contains built-in Nix wrapper to ensure the PATH always begins with `${pkgs.flatpak}/bin/` bin, to prevent configuration mistakes.
 - Logs its experiences in a wondrous diary of adventure so that you can see why, when something goes wrong.
 - Centrally managed with a TOML config file, which is hopefully kind of easy to declaratively manage.
 - A schema-aware Nix configuration module, so that I will forget to update it when I make changes to the TOML config. :sob:
