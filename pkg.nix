@@ -10,7 +10,7 @@ let
     cargoLock.lockFile = ./Cargo.lock;
     meta = {
       description = "A wrapper for flatpak to make xdg-portal service compatible with nixpak";
-      homepage = "https://github.com/alxpettit/nixpak-flatpak-wrapper";
+      homepage = "https://github.com/a7287/nixpak-flatpak-wrapper";
       license = pkgs.lib.licenses.lgpl3Only;
     };
   };
