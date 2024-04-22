@@ -20,7 +20,7 @@ You can add it to your system flake `inputs` like so:
 
 ```nix
 nixpak-flatpak-wrapper = {
-  url = "github:a7287/nixpak-flatpak-wrapper";
+  url = "github:crabdancing/nixpak-flatpak-wrapper";
   inputs.nixpkgs.follows = "nixpkgs";
 };
 ```
