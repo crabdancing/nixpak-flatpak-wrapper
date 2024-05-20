@@ -18,5 +18,6 @@ serde = { version = "1.0.197", features = ["derive"] }
 snafu = "0.8.2"
 strum = "0.26.2"
 strum_macros = "0.26.2"
+sysinfo = "0.30.12"
 toml = "0.8.12"
 which = "6.0.1"

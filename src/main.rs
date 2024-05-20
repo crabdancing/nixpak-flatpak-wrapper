@@ -12,6 +12,7 @@ use log::{debug, error, info};
 use serde::{Deserialize, Serialize};
 use snafu::{whatever, OptionExt, ResultExt, Whatever};
 use strum_macros::Display;
+use sysinfo::{Pid, Process, System};
 
 #[derive(Eq, PartialEq, Display)]
 enum OutputOptions {
@@ -88,6 +89,23 @@ fn setup_logger(log_path: &PathBuf) -> Result<(), fern::InitError> {
     Ok(())
 }
 
+fn find_parent_process_name() -> Result<String, Whatever> {
+    let current_process_id = Pid::from_u32(std::process::id());
+    let mut sys = System::new();
+    sys.refresh_processes();
+    let current_process = sys
+        .process(current_process_id)
+        .with_whatever_context(|| "Could not find current process")?;
+    let parent_process = sys
+        .process(
+            current_process
+                .parent()
+                .with_whatever_context(|| "Could not find parent process ID")?,
+        )
+        .with_whatever_context(|| "Could not find parent process")?;
+    Ok(parent_process.name().to_string())
+}
+
 fn main_with_fallback(args: &mut VecDeque<String>) -> Result<(), Whatever> {
     // we need the config first so that we know if we're logging or not
     let config_path = PathBuf::from("/etc/nixpak-flatpak-wrapper.toml");
@@ -104,6 +122,14 @@ fn main_with_fallback(args: &mut VecDeque<String>) -> Result<(), Whatever> {
         log_file.push("nixpak-flatpak-wrapper.log");
 
         setup_logger(&log_file).expect("Failed to setup logging");
+        match find_parent_process_name() {
+            Ok(parent_process) => {
+                info!("Found parent process: {}", parent_process);
+            }
+            Err(e) => {
+                error!("Could not find parent process: {}", e);
+            }
+        }
     }
 
     let home_dir = PathBuf::from(
