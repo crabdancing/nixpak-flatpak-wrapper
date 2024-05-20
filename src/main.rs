@@ -26,12 +26,19 @@ enum OutputOptions {
     ReadOnly,
 }
 
-#[derive(Serialize, Deserialize, Debug, Default)]
+#[derive(Serialize, Deserialize, Debug)]
 struct Config {
-    #[serde(default)]
     enable_logging: bool,
-    #[serde(default)]
     perms: Vec<AppEntry>,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self {
+            enable_logging: true,
+            perms: Vec::new(),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Default)]
