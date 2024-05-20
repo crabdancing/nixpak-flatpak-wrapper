@@ -88,20 +88,30 @@ fn setup_logger(log_path: &PathBuf) -> Result<(), fern::InitError> {
     Ok(())
 }
 
-fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
-    let home_dir = PathBuf::from(
-        env::var("HOME")
-            .with_whatever_context(|e| format!("Failed to get HOME directory!: {:?}", e))?,
-    );
-
-    debug!("Arguments: {:?}", &args);
-
+fn main_with_fallback(args: &mut VecDeque<String>) -> Result<(), Whatever> {
+    // we need the config first so that we know if we're logging or not
     let config_path = PathBuf::from("/etc/nixpak-flatpak-wrapper.toml");
     let config_str = std::fs::read_to_string(&config_path)
         .with_whatever_context(|e| format!("Failed to read config!: {:?}", e))?;
 
     let mut config: Config = toml::from_str(&config_str)
         .with_whatever_context(|e| format!("Failed to deserialize config: {:?}", e))?;
+
+    if config.enable_logging {
+        let mut log_file = dirs::data_local_dir().expect("Could not get data local dir");
+        log_file.push("nixpak-flatpak-wrapper");
+        fs::create_dir_all(&log_file).expect("Failed to create my data local dir");
+        log_file.push("nixpak-flatpak-wrapper.log");
+
+        setup_logger(&log_file).expect("Failed to setup logging");
+    }
+
+    let home_dir = PathBuf::from(
+        env::var("HOME")
+            .with_whatever_context(|e| format!("Failed to get HOME directory!: {:?}", e))?,
+    );
+
+    debug!("Arguments: {:?}", &args);
 
     for app in &mut config.perms {
         for rw_perm in &mut app.bind.rw {
@@ -186,19 +196,7 @@ fn app(args: &mut VecDeque<String>) -> Result<(), Whatever> {
 }
 
 fn main() -> Result<(), Whatever> {
-    let mut log_file = dirs::data_local_dir().expect("Could not get data local dir");
-    log_file.push("nixpak-flatpak-wrapper");
-    fs::create_dir_all(&log_file).expect("Failed to create my data local dir");
-    log_file.push("nixpak-flatpak-wrapper.log");
-
-    setup_logger(&log_file).expect("Failed to setup logging");
-    debug!("Init");
     let mut args: VecDeque<String> = env::args().collect();
-
-    let home_dir = PathBuf::from(
-        env::var("HOME")
-            .with_whatever_context(|e| format!("Failed to get HOME directory!: {:?}", e))?,
-    );
 
     let mut self_path = PathBuf::from(args.pop_front().with_whatever_context(|| {
         "How is there no initial (self path) arg? What OS are you on?"
@@ -216,7 +214,7 @@ fn main() -> Result<(), Whatever> {
         false => PathBuf::from("flatpak-raw"),
     };
 
-    match app(&mut args) {
+    match main_with_fallback(&mut args) {
         Ok(()) => {}
 
         Err(e) => {

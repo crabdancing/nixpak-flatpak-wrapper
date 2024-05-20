@@ -35,6 +35,11 @@ in {
     settings = lib.mkOption {
       type = lib.types.submodule {
         options = {
+          enable_logging = lib.mkOption {
+            type = lib.types.bool;
+            default = true;
+            description = "Whether or not to enable logging";
+          };
           perms = lib.mkOption {
             type = lib.types.listOf permissionType;
             default = [];
