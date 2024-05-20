@@ -30,6 +30,7 @@ Once you've added the `nixosModules.default` to your system modules, configurati
 programs.nixpak-flatpak-wrapper = {
   enable = true;
   settings = {
+    enable_logging = true,
     perms = [
       {
         app_id = "org.chromium.Chromium";
