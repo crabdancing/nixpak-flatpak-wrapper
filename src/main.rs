@@ -96,12 +96,11 @@ fn setup_logger(log_path: &PathBuf) -> Result<(), fern::InitError> {
     Ok(())
 }
 
-fn find_parent_process_name() -> Result<String, Whatever> {
-    let current_process_id = Pid::from_u32(std::process::id());
-    let mut sys = System::new();
+// For some godawful reason, `Process` does not impl `Clone`. As a result, we have to do some dumb shit
+fn find_parent_process(sys: &mut System, pid: Pid) -> Result<(&str, Pid), Whatever> {
     sys.refresh_processes();
     let current_process = sys
-        .process(current_process_id)
+        .process(pid)
         .with_whatever_context(|| "Could not find current process")?;
     let parent_process = sys
         .process(
@@ -110,7 +109,7 @@ fn find_parent_process_name() -> Result<String, Whatever> {
                 .with_whatever_context(|| "Could not find parent process ID")?,
         )
         .with_whatever_context(|| "Could not find parent process")?;
-    Ok(parent_process.name().to_string())
+    Ok((parent_process.name(), parent_process.pid()))
 }
 
 fn main_with_fallback(args: &mut VecDeque<String>) -> Result<(), Whatever> {
@@ -129,12 +128,27 @@ fn main_with_fallback(args: &mut VecDeque<String>) -> Result<(), Whatever> {
         log_file.push("nixpak-flatpak-wrapper.log");
 
         setup_logger(&log_file).expect("Failed to setup logging");
-        match find_parent_process_name() {
-            Ok(parent_process) => {
-                info!("Found parent process: {}", parent_process);
+        let mut sys = System::new();
+        let current_process_id = Pid::from_u32(std::process::id());
+        let mut parent_process_pid = None;
+        match find_parent_process(&mut sys, current_process_id) {
+            Ok((name, pid)) => {
+                info!("Found parent process name: {} PID: {}", name, pid);
+                parent_process_pid = Some(pid);
             }
             Err(e) => {
                 error!("Could not find parent process: {}", e);
+            }
+        }
+
+        if let Some(parent_process_pid) = parent_process_pid {
+            match find_parent_process(&mut sys, parent_process_pid) {
+                Ok((name, pid)) => {
+                    info!("Found grandparent process name: {} PID: {}", name, pid);
+                }
+                Err(e) => {
+                    error!("Error finding grandparent process: {}", e);
+                }
             }
         }
     }
