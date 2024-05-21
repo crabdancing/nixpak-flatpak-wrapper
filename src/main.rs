@@ -98,7 +98,6 @@ fn setup_logger(log_path: &PathBuf) -> Result<(), fern::InitError> {
 
 // For some godawful reason, `Process` does not impl `Clone`. As a result, we have to do some dumb shit
 fn find_parent_process(sys: &mut System, pid: Pid) -> Result<(&str, Pid), Whatever> {
-    sys.refresh_processes();
     let current_process = sys
         .process(pid)
         .with_whatever_context(|| "Could not find current process")?;
@@ -129,6 +128,7 @@ fn main_with_fallback(args: &mut VecDeque<String>) -> Result<(), Whatever> {
 
         setup_logger(&log_file).expect("Failed to setup logging");
         let mut sys = System::new();
+        sys.refresh_processes();
         let current_process_id = Pid::from_u32(std::process::id());
         let mut parent_process_pid = None;
         match find_parent_process(&mut sys, current_process_id) {
