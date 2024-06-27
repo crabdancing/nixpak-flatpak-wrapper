@@ -2,6 +2,36 @@ Glue to wrap `flatpak`, as part of a mischievous scam, tricking `xdg-desktop-por
 
 I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com/flatpak/xdg-desktop-portal/pull/741) on stuff like this any time soon.
 
+## Someday Eventually Asked Questions
+
+- Q: What's it actually do?
+- A: It functions as a drop-in replacement for the original flatpak package & module.
+- Q: Does it control the permissions given by bwrap via `nixpak`?
+- A: No, it doesn't touch that stuff.
+- Q: So I have to specify my permissions in two places?
+- A: Yeah.
+- Q: That sucks.
+- A: True.
+- Q: Do I need to have the nixpkgs flatpak service enabled too for flatpak to work?
+- A: You probably shouldn't.
+- Q: What happens if I do?
+- A: Um... bad things, probably. I don't think I've tried it.
+- Q: Why not use an overlay instead?
+- A: That's a good question, actually.
+- Q: And what's the answer?
+- A: I dunno.
+- Q: Are you being serious?
+- A: Yes. ^w^
+- Q: Why are you like this?
+- A: I'm really busy.
+- Q: Do you accept PRs?
+- A: Sure. :3
+- Q: Why did you give it such a bad/awkward name?
+- A: Because I'm a programmer.
+- Q: Why did you code this is in Rust instead of using a shell script?
+- A: Because I like the provability
+
+
 ## Features 
 
 - Theoretically kind of robust (IDK, I haven't seen it misbehave yet.)
