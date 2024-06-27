@@ -28,7 +28,7 @@ I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com
 - A: Sure. :3
 - Q: Why did you give it such a bad/awkward name?
 - A: Because I'm a programmer.
-- Q: Why did you code this is in Rust instead of using a shell script?
+- Q: Why did you code this in Rust instead of using a shell script?
 - A: I like 🦀 uwu
 - Q: What?
 - A: Yes.
