@@ -13,17 +13,9 @@ I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com
 - Q: That sucks.
 - A: True.
 - Q: Do I need to have the nixpkgs flatpak service enabled too for flatpak to work?
-- A: You probably shouldn't.
-- Q: What happens if I do?
+- A: Very likely.
+- Q: What happens if I don't?
 - A: Um... bad things, probably. I don't think I've tried it.
-- Q: Why not use an overlay instead?
-- A: That's a good question, actually.
-- Q: And what's the answer?
-- A: I dunno.
-- Q: Are you being serious?
-- A: Yes. ^w^
-- Q: Why are you like this?
-- A: I'm really busy.
 - Q: Do you accept PRs?
 - A: Sure. :3
 - Q: Why did you give it such a bad/awkward name?
@@ -32,6 +24,8 @@ I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com
 - A: I like 🦀 uwu
 - Q: What?
 - A: Yes.
+- Q: uwu
+- A: :3
 
 
 ## Features 

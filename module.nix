@@ -1,10 +1,6 @@
 { config, pkgs, lib, ... }: let
   cfg = config.programs.nixpak-flatpak-wrapper;
   fmt = pkgs.formats.toml {};
-  wrapperPackage = import ./pkg.nix {
-    inherit pkgs lib;
-    flatpak-pkg = cfg.package;
-  };
   permissionType = lib.types.submodule {
     options = {
       app_id = lib.mkOption {
@@ -52,20 +48,18 @@ in {
       type = lib.types.bool;
       default = false;
     };
-    package = lib.mkOption {
-      type = lib.types.package;
-      default = pkgs.flatpak;
-    };
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [
-      wrapperPackage
+    nixpkgs.overlays = [
+      (final: previous: {
+        flatpak = import ./pkg.nix {
+          inherit pkgs lib;
+          flatpak-pkg = previous.flatpak;
+        };
+      })
     ];
-    services.dbus.packages = [ wrapperPackage ];
-    systemd.packages = [ wrapperPackage ];
 
     environment.etc."nixpak-flatpak-wrapper.toml".source = fmt.generate "nixpak-flatpak-wrapper.toml" cfg.settings;
   };
-
 }
