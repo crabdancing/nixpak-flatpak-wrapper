@@ -59,11 +59,7 @@ in {
   };
 
   config = lib.mkIf cfg.enable {
-    environment.systemPackages = [
-      wrapperPackage
-    ];
-    services.dbus.packages = [ wrapperPackage ];
-    systemd.packages = [ wrapperPackage ];
+    services.flatpak.package = wrapperPackage;
 
     environment.etc."nixpak-flatpak-wrapper.toml".source = fmt.generate "nixpak-flatpak-wrapper.toml" cfg.settings;
   };
