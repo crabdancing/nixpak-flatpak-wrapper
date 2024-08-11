@@ -18,7 +18,7 @@ in
 (pkgs.symlinkJoin {
     name = "flatpak";
     meta.mainProgram = "flatpak";
-    paths = [ pkgs.flatpak rustPkg ];
+    paths = [ flatpak-pkg rustPkg ];
     nativeBuildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
       mv "$out/bin/flatpak" "$out/bin/flatpak-raw"

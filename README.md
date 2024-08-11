@@ -22,6 +22,8 @@ I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com
 - A: I like 🦀 uwu
 - Q: What?
 - A: Yes.
+- Q: uwu
+- A: :3
 
 
 ## Features 
@@ -49,6 +51,8 @@ nixpak-flatpak-wrapper = {
 
 Once you've added the `nixosModules.default` to your system modules, configuration can happen like so:
 ```nix
+services.flatpak.enable = true;
+
 programs.nixpak-flatpak-wrapper = {
   enable = true;
   settings = {
