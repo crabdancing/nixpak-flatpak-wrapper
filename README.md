@@ -2,10 +2,10 @@ Glue to wrap `flatpak`, as part of a mischievous scam, tricking `xdg-desktop-por
 
 I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com/flatpak/xdg-desktop-portal/pull/741) on stuff like this any time soon.
 
+This package functions as a drop-in replacement for the original flatpak package. The module exposed in this flake automatically inserts this package as a replacement for the upstream `pkgs.flatpak` in `services.flatpak.package`. It may, in the future, do some kind of other configuration work for better UX.
+
 ## Someday Eventually Asked Questions
 
-- Q: What's it actually do?
-- A: It functions as a drop-in replacement for the original flatpak package & module.
 - Q: Does it control the permissions given by bwrap via `nixpak`?
 - A: No, it doesn't touch that stuff.
 - Q: So I have to specify my permissions in two places?
@@ -22,9 +22,6 @@ I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com
 - A: I like 🦀 uwu
 - Q: What?
 - A: Yes.
-- Q: uwu
-- A: :3
-
 
 ## Features 
 
@@ -37,7 +34,6 @@ I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com
 - A schema-aware Nix configuration module, so that I will forget to update it when I make changes to the TOML config. :sob:
 - Arguably overengineered, with questionable features such as tilda expansion.
 
-
 ## Usage
 
 You can add it to your system flake `inputs` like so:
@@ -45,6 +41,8 @@ You can add it to your system flake `inputs` like so:
 ```nix
 nixpak-flatpak-wrapper = {
   url = "github:crabdancing/nixpak-flatpak-wrapper";
+  # If you don't follow your own nixpkgs,
+  # you might be accidentally substituting `flatpak` with an older/newer version than in nixpkgs!
   inputs.nixpkgs.follows = "nixpkgs";
 };
 ```
