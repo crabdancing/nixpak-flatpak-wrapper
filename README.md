@@ -12,8 +12,8 @@ I mean, it wasn't like [upstream was gonna stop bikeshedding](https://github.com
 - A: Yeah.
 - Q: That sucks.
 - A: True.
-- Q: Do I need to have the nixpkgs flatpak service enabled as well for flatpak to work?
-- A: Yep. :)
+- Q: Do I need to have the nixpkgs flatpak service enabled too for flatpak to work?
+- A: Yup!
 - Q: Do you accept PRs?
 - A: Sure. :3
 - Q: Why did you give it such a bad/awkward name?
